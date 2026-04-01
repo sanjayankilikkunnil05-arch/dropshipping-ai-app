@@ -5,6 +5,12 @@ import joblib
 # Load model
 model = joblib.load("final_model.pkl")
 
+# Get exact feature names from model
+try:
+    feature_names = model.feature_names_in_
+except:
+    feature_names = None
+
 # Page config
 st.set_page_config(page_title="Dropshipping AI", page_icon="🚀", layout="centered")
 
@@ -29,35 +35,30 @@ competition = st.slider("Competition", 1, 10, 1)
 if st.button("🚀 Analyze Product"):
 
     try:
-        # Derived features
+        # Create derived features
         engagement_rate = (likes + comments) / views if views > 0 else 0
         profit_ratio = profit_margin / price if price > 0 else 0
         demand_score = views * engagement_rate
 
-        # ⚠️ IMPORTANT: EXACT ORDER
-        input_data = pd.DataFrame([[
-            views,
-            likes,
-            comments,
-            price,
-            profit_margin,
-            wow_factor,
-            competition,
-            engagement_rate,
-            profit_ratio,
-            demand_score
-        ]], columns=[
-            "views",
-            "likes",
-            "comments",
-            "price",
-            "profit_margin",
-            "wow_factor",
-            "competition",
-            "engagement_rate",
-            "profit_ratio",
-            "demand_score"
-        ])
+        # Create full data dict
+        data_dict = {
+            "views": views,
+            "likes": likes,
+            "comments": comments,
+            "price": price,
+            "profit_margin": profit_margin,
+            "wow_factor": wow_factor,
+            "competition": competition,
+            "engagement_rate": engagement_rate,
+            "profit_ratio": profit_ratio,
+            "demand_score": demand_score
+        }
+
+        # 🔥 CRITICAL FIX: USE MODEL FEATURE ORDER
+        if feature_names is not None:
+            input_data = pd.DataFrame([[data_dict[col] for col in feature_names]], columns=feature_names)
+        else:
+            input_data = pd.DataFrame([data_dict])
 
         # Prediction
         prediction = model.predict(input_data)[0]

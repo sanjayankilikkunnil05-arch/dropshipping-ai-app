@@ -29,18 +29,27 @@ competition = st.slider("Competition", 1, 10, 1)
 # Button
 if st.button("🚀 Analyze Product"):
 
-    # FIXED INPUT FORMAT (IMPORTANT)
-    input_data = pd.DataFrame([{
-        "views": views,
-        "likes": likes,
-        "comments": comments,
-        "price": price,
-        "profit_margin": profit_margin,
-        "wow_factor": wow_factor,
-        "competition": competition
-    }])
-
     try:
+        # 🔥 CREATE MISSING FEATURES (VERY IMPORTANT)
+        engagement_rate = (likes + comments) / views if views > 0 else 0
+        profit_ratio = profit_margin / price if price > 0 else 0
+        demand_score = views * engagement_rate
+
+        # FINAL INPUT DATA (MATCH TRAINING FEATURES)
+        input_data = pd.DataFrame([{
+            "views": views,
+            "likes": likes,
+            "comments": comments,
+            "price": price,
+            "profit_margin": profit_margin,
+            "wow_factor": wow_factor,
+            "competition": competition,
+            "engagement_rate": engagement_rate,
+            "profit_ratio": profit_ratio,
+            "demand_score": demand_score
+        }])
+
+        # Prediction
         prediction = model.predict(input_data)[0]
 
         # Output

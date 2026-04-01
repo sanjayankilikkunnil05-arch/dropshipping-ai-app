@@ -60,16 +60,16 @@ if st.button("🚀 Analyze Product"):
         with st.spinner("Analyzing product with AI..."):
             time.sleep(2)
 
-            # Create dataframe
-            input_data = pd.DataFrame({
-                'views': [views],
-                'likes': [likes],
-                'comments': [comments],
-                'price': [price],
-                'profit_margin': [profit_margin],
-                'wow_factor': [wow_factor],
-                'competition': [competition]
-            })
+            # ✅ FIXED INPUT FORMAT (IMPORTANT)
+            input_data = pd.DataFrame([[
+                views,
+                likes,
+                comments,
+                price,
+                profit_margin,
+                wow_factor,
+                competition
+            ]])
 
             # Prediction
             prediction = model.predict(input_data)[0]

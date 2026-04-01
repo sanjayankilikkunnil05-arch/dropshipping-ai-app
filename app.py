@@ -16,12 +16,11 @@ st.subheader("Find Winning Products Using AI")
 product_name = st.text_input("Product Name")
 
 views = st.number_input("Views", min_value=0.0, value=0.0)
-price = st.number_input("Price", min_value=0.0, value=0.0)
-
 likes = st.number_input("Likes", min_value=0.0, value=0.0)
-profit_margin = st.number_input("Profit Margin", min_value=0.0, value=0.0)
-
 comments = st.number_input("Comments", min_value=0.0, value=0.0)
+
+price = st.number_input("Price", min_value=0.0, value=0.0)
+profit_margin = st.number_input("Profit Margin", min_value=0.0, value=0.0)
 
 wow_factor = st.slider("Wow Factor", 1, 10, 1)
 competition = st.slider("Competition", 1, 10, 1)
@@ -30,29 +29,39 @@ competition = st.slider("Competition", 1, 10, 1)
 if st.button("🚀 Analyze Product"):
 
     try:
-        # 🔥 CREATE MISSING FEATURES (VERY IMPORTANT)
+        # Derived features
         engagement_rate = (likes + comments) / views if views > 0 else 0
         profit_ratio = profit_margin / price if price > 0 else 0
         demand_score = views * engagement_rate
 
-        # FINAL INPUT DATA (MATCH TRAINING FEATURES)
-        input_data = pd.DataFrame([{
-            "views": views,
-            "likes": likes,
-            "comments": comments,
-            "price": price,
-            "profit_margin": profit_margin,
-            "wow_factor": wow_factor,
-            "competition": competition,
-            "engagement_rate": engagement_rate,
-            "profit_ratio": profit_ratio,
-            "demand_score": demand_score
-        }])
+        # ⚠️ IMPORTANT: EXACT ORDER
+        input_data = pd.DataFrame([[
+            views,
+            likes,
+            comments,
+            price,
+            profit_margin,
+            wow_factor,
+            competition,
+            engagement_rate,
+            profit_ratio,
+            demand_score
+        ]], columns=[
+            "views",
+            "likes",
+            "comments",
+            "price",
+            "profit_margin",
+            "wow_factor",
+            "competition",
+            "engagement_rate",
+            "profit_ratio",
+            "demand_score"
+        ])
 
         # Prediction
         prediction = model.predict(input_data)[0]
 
-        # Output
         if prediction == 1:
             st.success("🔥 This product is WINNING!")
         else:
